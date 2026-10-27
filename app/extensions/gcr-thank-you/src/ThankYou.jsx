@@ -19,10 +19,12 @@ function ResenasGoogle() {
   // En 2026-xx, order.id es el GID de la orden en la Admin API.
   const orderId = shopify.orderConfirmation.value?.order?.id;
   const settings = shopify.settings.value || {};
+  // Solo existe dentro del editor de checkout (vista previa con pedido de ejemplo).
+  const enEditor = Boolean(shopify.extension.editor);
   const [link, setLink] = useState(null);
 
   useEffect(() => {
-    if (!orderId) return;
+    if (enEditor || !orderId) return;
     let cancelado = false;
 
     (async () => {
@@ -47,10 +49,15 @@ function ResenasGoogle() {
     return () => {
       cancelado = true;
     };
-  }, [orderId]);
+  }, [orderId, enEditor]);
 
+  // En el editor se muestra siempre, con el botón desactivado, para ver y ajustar el diseño.
+  if (enEditor) return <Bloque settings={settings} link={null} />;
   if (!link) return null;
+  return <Bloque settings={settings} link={link} />;
+}
 
+function Bloque({ settings, link }) {
   return (
     <s-section heading={settings.titulo || "¿Nos ayudas con tu opinión?"}>
       <s-stack gap="base">
@@ -58,9 +65,19 @@ function ResenasGoogle() {
           {settings.texto ||
             "Cuando recibas tu pedido, Google te enviará una breve encuesta sobre tu compra en BUHU. Toma menos de un minuto y nos ayuda muchísimo."}
         </s-text>
-        <s-button href={link} target="_blank" variant="primary">
+        <s-button
+          href={link || undefined}
+          target="_blank"
+          variant="primary"
+          disabled={!link}
+        >
           {settings.boton || "Sí, quiero opinar"}
         </s-button>
+        {!link && (
+          <s-text color="subdued">
+            Vista previa del editor: en un pedido real el botón se activa y abre la encuesta de Google.
+          </s-text>
+        )}
       </s-stack>
     </s-section>
   );
