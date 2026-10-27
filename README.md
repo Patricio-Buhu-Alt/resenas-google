@@ -43,7 +43,7 @@ npm install
 npx shopify app config link        # elige "Create a new app" → nombre: resenas-google
 ```
 
-Eso completa `client_id` en `shopify.app.toml`. En el **Dev Dashboard → resenas-google → Settings**
+Eso crea `shopify.app.resenas-google.toml` (ya incluido en el repo). En el **Dev Dashboard → resenas-google → Settings**
 copia el **Client ID** y el **Client secret** (`shpss_…`).
 
 ### 2. Desplegar la API en Render
@@ -53,7 +53,7 @@ Render → **New → Blueprint** → este repositorio (usa `render.yaml`). Compl
 - `SHOPIFY_CLIENT_ID` y `SHOPIFY_CLIENT_SECRET` de la app del paso 1.
 
 Prueba: `https://resenas-google.onrender.com/health` debe responder `{"ok":true}`.
-Si Render te asigna otra URL, cámbiala en `app/shopify.app.toml` (3 lugares) y en
+Si Render te asigna otra URL, cámbiala en `app/shopify.app.resenas-google.toml` (3 lugares) y en
 `app/extensions/gcr-thank-you/src/ThankYou.jsx` (`APP_URL`).
 
 > **Plan de Render:** en el plan gratis el servicio se duerme y tarda ~50 s en despertar; en ese
