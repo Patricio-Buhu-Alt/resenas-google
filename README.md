@@ -108,6 +108,6 @@ cp .env.example .env && npm start
 
 ## Notas
 
-- La extensión usa `api_version = "2025-07"`, la última con React. Para 2025-10 o superior, Shopify exige
-  Preact y componentes `s-*`; la lógica es la misma.
+- La extensión usa `api_version = "2026-07"` con Preact y componentes Polaris (`s-*`). Shopify ya no
+  acepta versiones anteriores a 2026-01 para extensiones de checkout.
 - Si rotas el Client secret, los enlaces generados antes dejan de funcionar (vencen en 24 h de todos modos).

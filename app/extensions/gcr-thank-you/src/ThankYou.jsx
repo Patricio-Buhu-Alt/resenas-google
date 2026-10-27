@@ -1,29 +1,25 @@
-import {
-  reactExtension,
-  BlockStack,
-  Button,
-  Heading,
-  Text,
-  useApi,
-  useSettings,
-  useSubscription,
-} from "@shopify/ui-extensions-react/checkout";
-import { useEffect, useState } from "react";
+// Bloque "Reseñas Google" en la página "Gracias por tu compra".
+// Pide al backend un enlace de un solo uso y muestra un botón que abre
+// www.buhu.cl/apps/resenas, donde Google muestra su invitación a la encuesta.
+// API 2026-07: Preact + componentes Polaris (s-*), APIs en el objeto global `shopify`.
+
+import "@shopify/ui-extensions/preact";
+import { render } from "preact";
+import { useEffect, useState } from "preact/hooks";
 
 // URL pública del backend en Render (sin / al final).
-// Si Render te asigna otra URL, cámbiala aquí y en shopify.app.toml.
+// Si Render te asigna otra URL, cámbiala aquí y en shopify.app.resenas-google.toml.
 const APP_URL = "https://resenas-google.onrender.com";
 
-export default reactExtension("purchase.thank-you.block.render", () => <ResenasGoogle />);
+export default async () => {
+  render(<ResenasGoogle />, document.body);
+};
 
 function ResenasGoogle() {
-  const { orderConfirmation, sessionToken } = useApi();
-  const confirmation = useSubscription(orderConfirmation);
-  const settings = useSettings();
+  // En 2026-xx, order.id es el GID de la orden en la Admin API.
+  const orderId = shopify.orderConfirmation.value?.order?.id;
+  const settings = shopify.settings.value || {};
   const [link, setLink] = useState(null);
-  const [estado, setEstado] = useState("cargando"); // cargando | listo | oculto
-
-  const orderId = confirmation?.order?.id;
 
   useEffect(() => {
     if (!orderId) return;
@@ -31,7 +27,7 @@ function ResenasGoogle() {
 
     (async () => {
       try {
-        const token = await sessionToken.get();
+        const token = await shopify.sessionToken.get();
         const res = await fetch(`${APP_URL}/token`, {
           method: "POST",
           headers: {
@@ -40,37 +36,32 @@ function ResenasGoogle() {
           },
           body: JSON.stringify({ orderId }),
         });
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        if (!res.ok) return;
         const data = await res.json();
-        if (!cancelado && data?.url) {
-          setLink(data.url);
-          setEstado("listo");
-        } else if (!cancelado) {
-          setEstado("oculto");
-        }
-      } catch (e) {
-        // Si algo falla, el bloque simplemente no se muestra: nunca debe estorbar la compra.
-        if (!cancelado) setEstado("oculto");
+        if (!cancelado && data?.url) setLink(data.url);
+      } catch {
+        // Si algo falla, el bloque no aparece: nunca debe estorbar la compra.
       }
     })();
 
     return () => {
       cancelado = true;
     };
-  }, [orderId, sessionToken]);
+  }, [orderId]);
 
-  if (estado !== "listo" || !link) return null;
+  if (!link) return null;
 
   return (
-    <BlockStack spacing="base" border="base" padding="base" cornerRadius="base">
-      <Heading level={2}>{settings.titulo || "¿Nos ayudas con tu opinión?"}</Heading>
-      <Text>
-        {settings.texto ||
-          "Cuando recibas tu pedido, Google te enviará una breve encuesta sobre tu compra en BUHU. Toma menos de un minuto y nos ayuda muchísimo."}
-      </Text>
-      <Button to={link} external>
-        {settings.boton || "Sí, quiero opinar"}
-      </Button>
-    </BlockStack>
+    <s-section heading={settings.titulo || "¿Nos ayudas con tu opinión?"}>
+      <s-stack gap="base">
+        <s-text>
+          {settings.texto ||
+            "Cuando recibas tu pedido, Google te enviará una breve encuesta sobre tu compra en BUHU. Toma menos de un minuto y nos ayuda muchísimo."}
+        </s-text>
+        <s-button href={link} target="_blank" variant="primary">
+          {settings.boton || "Sí, quiero opinar"}
+        </s-button>
+      </s-stack>
+    </s-section>
   );
 }

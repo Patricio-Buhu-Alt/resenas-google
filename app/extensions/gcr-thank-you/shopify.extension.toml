@@ -1,7 +1,6 @@
 # Extensión de checkout: bloque "Reseñas Google" en la página de agradecimiento.
-# 2025-07 es la última versión con extensiones en React (@shopify/ui-extensions-react).
-# Si tu app ya usa 2025-10+ (Preact + componentes s-*), hay que migrar ThankYou.jsx.
-api_version = "2025-07"
+# API 2026-07: Preact + componentes Polaris (s-*).
+api_version = "2026-07"
 
 [[extensions]]
 name = "Reseñas Google"
