@@ -1,0 +1,15 @@
+{
+  "name": "resenas-google-api",
+  "version": "1.0.0",
+  "description": "Backend de Reseñas de Clientes en Google para BUHU (token de checkout + App Proxy).",
+  "type": "module",
+  "private": true,
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "name": "resenas-google-app",
+  "private": true,
+  "workspaces": ["extensions/*"],
+  "scripts": {
+    "deploy": "shopify app deploy",
+    "dev": "shopify app dev"
+  },
+  "devDependencies": {
+    "@shopify/cli": "^3.80.0"
+  }
+}

@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: resenas-google
+    runtime: node
+    plan: free
+    rootDir: api
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: SHOPIFY_STORE
+        value: buhu-cl.myshopify.com
+      - key: SHOPIFY_CLIENT_ID
+        sync: false
+      - key: SHOPIFY_CLIENT_SECRET
+        sync: false
+      - key: API_VERSION
+        value: "2025-07"
+      - key: GCR_MERCHANT_ID
+        value: "5680138219"
+      - key: GCR_DELIVERY_DAYS
+        value: "5"
+      - key: PUBLIC_STORE_URL
+        value: https://www.buhu.cl
